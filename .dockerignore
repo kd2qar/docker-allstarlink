@@ -1,0 +1,9 @@
+.git
+.gitignore
+[Oo][Bb][Ss][Oo][Ll][Ee][Tt][Ee]
+[Ii][Gg][Nn][Oo][Rr][Ee]
+Makefile
+asl-menu
+asterisk-config-custom
+console
+

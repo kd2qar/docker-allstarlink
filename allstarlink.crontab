@@ -1,0 +1,6 @@
+#  m    h  dom  mon  dow    command
+ */1    *    *    *    *    runuser -g asterisk -u asterisk /usr/bin/asl3-update-nodelist >> /var/log/cron.log 2>&1
+ */10   *    *    *    *    /usr/bin/asl3-update-astdb >> /var/log/cron.log 2>&1
+
+  2    *     *    *    *	/usr/bin/asl-telemetry >> /var/log/cron.log 2>&1
+

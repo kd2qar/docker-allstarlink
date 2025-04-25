@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker exec -it allstarlink  /usr/bin/asl-menu
+

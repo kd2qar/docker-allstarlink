@@ -1,0 +1,60 @@
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        root /var/www/html;
+
+        # Add index.php to the list if you are using PHP
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+
+        location / {
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                try_files $uri $uri/ =404;
+        }
+
+		#include /etc/allmon3/nginx.conf
+		location /allmon3/ {
+    		alias /usr/share/allmon3/;
+  		  autoindex off;
+		}
+
+		location /allmon3/master/ {
+    		proxy_http_version 1.1;
+    		proxy_set_header Host $http_host;
+    		proxy_set_header X-Forwarded-Proto $scheme;
+    		proxy_set_header X-Forwarded-For $remote_addr;
+    		proxy_set_header X-Forwarded-Port $server_port;
+    		proxy_set_header X-Request-Start $msec;
+  		  	proxy_pass http://localhost:16080/;
+		}
+
+		location ~ ^/allmon3/ws/([0-9]+)$ {
+    		set $port $1;
+    		proxy_pass  http://127.0.0.1:$port/;
+    		proxy_http_version 1.1;
+    		proxy_set_header Upgrade $http_upgrade;
+    		proxy_set_header Connection "Upgrade";
+    		proxy_set_header Host $http_host;
+    		proxy_set_header X-Forwarded-Proto $scheme;
+    		proxy_set_header X-Forwarded-For $remote_addr;
+    		proxy_set_header X-Forwarded-Port $server_port;
+    		proxy_set_header X-Request-Start $msec;
+		}
+
+
+        # pass PHP scripts to FastCGI server
+        #
+        #location ~ \.php$ {
+        #       include snippets/fastcgi-php.conf;
+        #
+        #       # With php-fpm (or other unix sockets):
+        #       fastcgi_pass unix:/run/php/php7.4-fpm.sock;
+        #       # With php-cgi (or other tcp sockets):
+        #       fastcgi_pass 127.0.0.1:9000;
+        #}
+
+}
+

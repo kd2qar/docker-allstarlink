@@ -1,0 +1,61 @@
+x-anchors:
+  - name: &name ${SERVER_NAME}
+  - hip: &hip   ${HOSTIP}
+  - asl3_volume: &asl3_volume ${ASL3_VOLUME}
+  - asterisk_volume: &asterisk_volume ${ASTERISK_VOLUME}
+  - allmon3_volume: &allmon3_volume ${ALLMON3_VOLUME}
+  - aslbackups_volume: &aslbackups_volume ${ASLBACKUPS_VOLUME}
+
+services:
+  allstarlink:
+    container_name: allstarlink
+    hostname: *name
+    network_mode: bridge
+    image: kd2qar/allstarlink
+    build:
+       context: .
+    volumes:
+      - type: bind
+        source: *asterisk_volume
+        target: /etc/asterisk
+      - type: bind
+        source: *allmon3_volume
+        target: /etc/allmon3
+      - type: bind
+        source: *aslbackups_volume
+        target: /var/asl-backups
+      - type: bind
+        source: *asl3_volume
+        target: /usr/share/asl3
+    ports:
+      - name: http
+        target: 80
+        host_ip: *hip
+        published: 80
+        protocol: tcp
+        app_protocol: http
+      - name: allmon3
+        target: 16080
+        host_ip: *hip
+        published: 16080
+        protocol: tcp
+      - name: websocckets
+        target: 16700
+        host_ip: *hip
+        published: 16700
+      - name: asterisk
+        target: 5038
+        host_ip: *hip
+        published: 5038
+
+    environment:
+      TZ: 'America/New_York'
+      Servername: *name
+
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: 3
+
+    restart: unless-stopped
